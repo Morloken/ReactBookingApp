@@ -13,7 +13,7 @@ export default async function Home() {
       <Heading title="Available Rooms" />
       {rooms.length > 0 ? 
         rooms.map((room) => (
-          <RoomCard /*key={room.id}*/ room={room} />
+          <RoomCard /*key={room.id}*/ room={room}  key = {room.$id}/>
         ))
        : 
        (
