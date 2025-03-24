@@ -1,39 +1,57 @@
-
+'use client';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useActionState } from 'react';
+import createSession from '../actions/createSession';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
-    return ( 
-        <>
-        <div className="flex items-center justify-center">
+
+  const [state, formAction] = useActionState(createSession, {});
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.error) toast.error(state.error);
+    if (state.success) {
+      toast.success('Logged in successfully');
+      router.push('/');
+    }
+  }, [state]);
+
+  return (
+    <>
+      <div className="flex items-center justify-center">
         <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-sm mt-20">
-          <form>
+          <form action={formAction}>
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
               Login
             </h2>
 
             <div className="mb-4">
               <label htmlFor="email" className="block text-gray-700 font-bold mb-2"
-                >Email</label
+              >Email</label
               >
               <input
                 type="email"
                 id="email"
                 name="email"
                 className="border rounded w-full py-2 px-3"
-                required
+              // required
               />
             </div>
 
             <div className="mb-6">
               <label htmlFor="password" className="block text-gray-700 font-bold mb-2"
-                >Password</label
+              >Password</label
               >
               <input
                 type="password"
                 id="password"
                 name="password"
                 className="border rounded w-full py-2 px-3"
-                required
+              // required
               />
             </div>
 
@@ -53,8 +71,8 @@ const LoginPage = () => {
           </form>
         </div>
       </div>
-        </>
-     );
+    </>
+  );
 }
- 
+
 export default LoginPage;
