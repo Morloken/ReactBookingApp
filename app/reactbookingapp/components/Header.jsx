@@ -1,5 +1,6 @@
 'use client'
 import React from 'react';
+import {useState, useEffect} from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';  
@@ -8,12 +9,25 @@ import logo from '@/assets/images/logo.svg';
 // import Register from '@/app/register/register';
 import destroySession from '@/app/actions/destroySession';
 import { toast } from 'react-toastify';
+import checkAuth from '@/app/actions/checkAuth';
 
 
 import {FaUser, FaSignOutAlt, FaSignInAlt, FaBuilding} from 'react-icons/fa';
 const Header = () => {
 
   const router = useRouter();
+
+  const [isAuthentificated, setIsAuthentificated] = useState(null);
+
+  useEffect(() => {
+    const fetchAuthStatus = async () => {
+      const result = await checkAuth();
+      setIsAuthentificated(result.isAuthentificated);
+    }
+
+    fetchAuthStatus();
+
+  }, []);
 
   const handleLogout = async () => {
   const {success, error } = await destroySession();
@@ -46,6 +60,8 @@ const Header = () => {
                   Rooms
                 </Link>
                 {/* <!-- Logged In Only --> */}
+                {isAuthentificated && (
+                <>
                 <Link
                   href="/bookings"
                   className="rounded-md px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-700 hover:text-white"
@@ -58,6 +74,8 @@ const Header = () => {
                 >
                   Add Room
                 </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -65,6 +83,8 @@ const Header = () => {
           <div className="ml-auto">
             <div className="ml-4 flex items-center md:ml-6">
               {/* <!-- Logged Out Only --> */}
+              {!isAuthentificated && (
+                <>
               <Link
                 href="/login"
                 className="mr-3 text-gray-800 hover:text-gray-600"
@@ -77,6 +97,10 @@ const Header = () => {
               >
                 <FaUser className='mr-1 inline'/> Register
               </Link>
+                
+                
+                </>
+              )}
               <Link href="/rooms/my">
               <FaBuilding className='mr-1 inline'/> My Rooms
               </Link>

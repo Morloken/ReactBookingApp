@@ -1,34 +1,43 @@
 'use server';
-import { createAdminClient } from "@/config/appwrite";
-import { cookies } from "next/headers";
+import { createAdminClient } from '@/config/appwrite';
+import { cookies } from 'next/headers';
+
 async function createSession(previousState, formData) {
-    const email = formData.get('email');
-    const password = formData.get('password');
+  const email = formData.get('email');
+  const password = formData.get('password');
 
-    if(!email || !password) {
-        return {
-            error: 'Email and password are required'
-        }
-    }
+  if (!email || !password) {
+    return {
+      error: 'Please fill out all fields',
+    };
+  }
 
-    //get account instance
-    const {acount} = await createAdminClient();
+  // Get account instance
+  const { account } = await createAdminClient();
 
-    try {
-        //create session
-       const session = await acount.createEmailPasswordSession(email, password);
+  try {
+    //  Generate session
+    const session = await account.createEmailPasswordSession(email, password);
 
-       //create cookie
-       cookies().set('appwrite-session', session.secret, {
-        httpOnly: true, secure: true, sameSite: 'strict', expires : new Date(session.expire), path: '/'
+    // Await cookies before setting
+    const cookiesStore = await cookies();
+    cookiesStore.set('appwrite-session', session.secret, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      expires: new Date(session.expire),
+      path: '/',
     });
 
-    return {success: true};
-    } catch (error) {
-        console.log('autentication error', error);
-        return {error:'Invalid credentials'};
-    }
-
-    
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log('Authentication Error: ', error);
+    return {
+      error: 'Invalid Credentials',
+    };
+  }
 }
+
 export default createSession;

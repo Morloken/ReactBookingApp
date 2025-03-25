@@ -9,7 +9,7 @@ const createAdminClient = async () => {
     .setKey(process.env.NEXT_APPWRITE_KEY);
 
     return{
-        get acount(){
+        get account(){
             return new Account(client);
         }
 
@@ -37,7 +37,7 @@ const createSessionClient = async (session) => {
         client.setSession(session);
     }
     return{
-        get acount(){
+        get account(){
             return new Account(client);
         }
 
